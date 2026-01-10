@@ -1,0 +1,175 @@
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Jost", sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: url(https://i.pinimg.com/1200x/e9/12/4e/e9124e785e4cbc59d481964ea748e685.jpg)
+    no-repeat center/cover;
+}
+
+.container {
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.todo-app {
+    width: 100%;
+    max-width: 420px;
+    padding: 2rem;
+    border-radius: 20px;
+    backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 80px rgba(0,0,0,0.4);
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.todo-app h1 {
+    text-align: center;
+    font-size: 2rem;
+}
+
+/* Progress bar */
+.progress-wrapper {
+    width: 100%;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 12px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #ff6f91, #ffbf69);
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    margin-top: 6px;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.input-area {
+    display: flex;
+    gap: 10px;
+}
+
+.input-area input {
+    flex: 1;
+    padding: 12px 18px;
+    border-radius: 25px;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    background: rgba(255,194,209,0.3);
+}
+
+.input-area button {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    background: #ff6f91;
+    color: white;
+    transition: transform 0.2s;
+}
+
+.input-area button:hover {
+    transform: scale(1.1);
+}
+
+.todos-container {
+    display: flex;
+    justify-content: center;
+}
+
+.empty-image {
+    width: 140px;
+    opacity: 0.7;
+}
+
+#task-list {
+    width: 100%;
+}
+
+#task-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    margin-bottom: 10px;
+    border-radius: 30px;
+    background: rgba(255,194,209,0.3);
+}
+
+#task-list li.completed span {
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+.checkbox {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    appearance: none;
+    border: 2px solid #fff;
+    cursor: pointer;
+}
+
+.checkbox:checked {
+    background: #ff6f91;
+}
+
+.task-buttons {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+}
+
+.task-buttons button {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+}
+
+.edit-btn { background: #ffbf00; }
+.delete-btn { background: #e63946; }
+
+/* Confetti canvas */
+#confetti-canvas {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .todo-app {
+        padding: 1.5rem;
+    }
+    .todo-app h1 {
+        font-size: 1.7rem;
+    }
+}

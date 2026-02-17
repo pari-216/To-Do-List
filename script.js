@@ -2,34 +2,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const taskInput = document.getElementById("task-input");
     const taskList = document.getElementById("task-list");
-    const emptyImage = document.querySelector(".empty-image");
+    const emptyState = document.querySelector(".empty-state");
 
     const progressFill = document.querySelector(".progress-fill");
     const progressText = document.querySelector(".progress-text");
+    const itemsLeftEl = document.getElementById("items-left");
+
+    const filterButtons = document.querySelectorAll(".filter-btn");
+    const clearCompletedBtn = document.getElementById("clear-completed");
+
+    const todayDateEl = document.getElementById("today-date");
+    const themeToggle = document.getElementById("theme-toggle");
 
     const canvas = document.getElementById("confetti-canvas");
     const ctx = canvas.getContext("2d");
 
+    let currentFilter = "all";
+
     function resizeCanvas() {
-    const dpr = window.devicePixelRatio || 1;
+        const dpr = window.devicePixelRatio || 1;
 
-    canvas.width = window.innerWidth * dpr;
-    canvas.height = window.innerHeight * dpr;
+        canvas.width = window.innerWidth * dpr;
+        canvas.height = window.innerHeight * dpr;
 
-    canvas.style.width = window.innerWidth + "px";
-    canvas.style.height = window.innerHeight + "px";
+        canvas.style.width = window.innerWidth + "px";
+        canvas.style.height = window.innerHeight + "px";
 
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
 
-resizeCanvas();
-window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
 
 
     let confettiParticles = [];
 
     function toggleEmptyState() {
-        emptyImage.style.display = taskList.children.length === 0 ? "block" : "none";
+        emptyState.style.display = taskList.children.length === 0 ? "flex" : "none";
     }
 
     function updateProgress() {
@@ -41,9 +50,33 @@ window.addEventListener("resize", resizeCanvas);
         progressFill.style.width = percent + "%";
         progressText.textContent = `${percent}% completed`;
 
+        if (itemsLeftEl) {
+            const remaining = total - completed;
+            itemsLeftEl.textContent = remaining;
+        }
+
         if (percent === 100 && total > 0) {
             startConfetti();
         }
+
+        applyFilter();
+    }
+
+    function applyFilter() {
+        const tasks = taskList.querySelectorAll("li");
+
+        tasks.forEach(task => {
+            const isCompleted = task.classList.contains("completed");
+
+            let shouldShow = true;
+            if (currentFilter === "active") {
+                shouldShow = !isCompleted;
+            } else if (currentFilter === "completed") {
+                shouldShow = isCompleted;
+            }
+
+            task.style.display = shouldShow ? "flex" : "none";
+        });
     }
 
     function addTask(text) {
@@ -93,9 +126,69 @@ window.addEventListener("resize", resizeCanvas);
         addTask(taskInput.value);
     });
 
+    /* ---------- FILTERS & CLEAR COMPLETED ---------- */
+    filterButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            filterButtons.forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            currentFilter = btn.dataset.filter || "all";
+            applyFilter();
+        });
+    });
+
+    if (clearCompletedBtn) {
+        clearCompletedBtn.addEventListener("click", () => {
+            const completedTasks = taskList.querySelectorAll("li.completed");
+            completedTasks.forEach(task => task.remove());
+            updateProgress();
+            toggleEmptyState();
+        });
+    }
+
+    /* ---------- HEADER DATE ---------- */
+    if (todayDateEl) {
+        const now = new Date();
+        const formatted = now.toLocaleDateString(undefined, {
+            weekday: "short",
+            day: "numeric",
+            month: "short"
+        });
+        todayDateEl.textContent = formatted;
+    }
+
+    /* ---------- THEME TOGGLE ---------- */
+    const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const savedTheme = localStorage.getItem("todo-theme");
+
+    function setTheme(theme) {
+        if (theme === "dark") {
+            document.body.classList.add("dark");
+        } else {
+            document.body.classList.remove("dark");
+        }
+
+        if (themeToggle) {
+            themeToggle.innerHTML = theme === "dark"
+                ? '<i class="fa-regular fa-sun"></i>'
+                : '<i class="fa-regular fa-moon"></i>';
+        }
+
+        localStorage.setItem("todo-theme", theme);
+    }
+
+    const initialTheme = savedTheme || (prefersDark ? "dark" : "light");
+    setTheme(initialTheme);
+
+    if (themeToggle) {
+        themeToggle.addEventListener("click", () => {
+            const isDark = document.body.classList.contains("dark");
+            setTheme(isDark ? "light" : "dark");
+        });
+    }
+
     /* ---------- CONFETTI ---------- */
     function startConfetti() {
-        confettiParticles = Array.from({ length: 120 }, () => ({
+        confettiParticles = Array.from({ length: 140 }, () => ({
             x: Math.random() * canvas.width,
             y: Math.random() * canvas.height,
             r: Math.random() * 6 + 4,

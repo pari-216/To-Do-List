@@ -1,10 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>To Do App</title>
+    <meta name="description" content="FlowTasks - A modern, responsive task management application for productivity">
+    <title>FlowTasks - Task Management App</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="style.css">
@@ -22,47 +22,126 @@
                 <p class="subtitle">Turn tiny todos into big wins.</p>
             </div>
             <div class="header-meta">
-                <span class="pill today-label">
-                    <i class="fa-regular fa-calendar"></i>
+                <span class="pill today-label" role="region" aria-live="polite">
+                    <i class="fa-regular fa-calendar" aria-hidden="true"></i>
                     <span id="today-date"></span>
                 </span>
-                <button class="pill theme-toggle" type="button" id="theme-toggle">
-                    <i class="fa-regular fa-moon"></i>
+                <button class="pill theme-toggle" type="button" id="theme-toggle" aria-label="Toggle dark mode">
+                    <i class="fa-regular fa-moon" aria-hidden="true"></i>
                 </button>
             </div>
         </header>
+
+        <!-- Statistics Dashboard -->
+        <div class="stats-dashboard">
+            <div class="stat-card">
+                <div class="stat-icon total">
+                    <i class="fa-solid fa-list-check"></i>
+                </div>
+                <div class="stat-content">
+                    <p class="stat-label">Total Tasks</p>
+                    <p class="stat-value" id="total-tasks">0</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon completed">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <div class="stat-content">
+                    <p class="stat-label">Completed</p>
+                    <p class="stat-value" id="completed-tasks">0</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon pending">
+                    <i class="fa-solid fa-hourglass-end"></i>
+                </div>
+                <div class="stat-content">
+                    <p class="stat-label">Pending</p>
+                    <p class="stat-value" id="pending-tasks">0</p>
+                </div>
+            </div>
+        </div>
 
         <!-- Progress Bar -->
         <div class="progress-wrapper">
             <div class="progress-top">
                 <span class="progress-label">Today’s progress</span>
-                <span class="progress-percentage progress-text">0% completed</span>
+                <span class="progress-percentage progress-text" aria-live="polite">0% completed</span>
             </div>
-            <div class="progress-bar">
+            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
                 <span class="progress-fill"></span>
             </div>
         </div>
 
         <!-- Input Area -->
-        <form class="input-area">
+        <form class="input-area" id="task-form">
             <div class="input-shell">
-                <i class="fa-regular fa-circle-plus input-icon"></i>
-                <input type="text" id="task-input" placeholder="Write a clear, actionable task..." />
+                <i class="fa-regular fa-circle-plus input-icon" aria-hidden="true"></i>
+                <input 
+                    type="text" 
+                    id="task-input" 
+                    placeholder="Write a clear, actionable task..." 
+                    aria-label="Task input"
+                    autocomplete="off"
+                />
             </div>
-            <button type="submit" id="add-task-btn" class="primary-btn">
+            <div class="priority-selector">
+                <label for="priority-input" class="sr-only">Task priority</label>
+                <select id="priority-input" class="priority-select" aria-label="Select task priority">
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                    <option value="low">Low</option>
+                </select>
+            </div>
+            <button type="submit" id="add-task-btn" class="primary-btn" aria-label="Add new task">
                 <span>Add</span>
-                <i class="fa-solid fa-plus"></i>
+                <i class="fa-solid fa-plus" aria-hidden="true"></i>
             </button>
         </form>
 
         <!-- Main Content -->
         <div class="content-layout">
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <button 
+                        type="button" 
+                        class="filter-btn active" 
+                        data-filter="all"
+                        aria-label="Show all tasks"
+                    >
+                        <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
+                        All
+                    </button>
+                    <button 
+                        type="button" 
+                        class="filter-btn" 
+                        data-filter="active"
+                        aria-label="Show pending tasks"
+                    >
+                        <i class="fa-solid fa-circle" aria-hidden="true"></i>
+                        Pending
+                    </button>
+                    <button 
+                        type="button" 
+                        class="filter-btn" 
+                        data-filter="completed"
+                        aria-label="Show completed tasks"
+                    >
+                        <i class="fa-solid fa-check-circle" aria-hidden="true"></i>
+                        Completed
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tasks Container -->
             <div class="todos-container">
-                <ul id="task-list"></ul>
-                <div class="empty-state">
-                    <img class="empty-image"
-                         src="https://i.ibb.co/4wWFh25Z/Screenshot-2026-01-08-221245-removebg-preview.png"
-                         alt="empty">
+                <ul id="task-list" role="list" aria-label="Task list"></ul>
+                <div class="empty-state" role="status" aria-live="polite">
+                    <div class="empty-icon">
+                        <i class="fa-regular fa-inbox"></i>
+                    </div>
                     <p class="empty-text">
                         Nothing here yet. Capture the next thing on your mind and watch the bar fill up.
                     </p>
@@ -72,17 +151,20 @@
             <!-- Taskbar / Controls -->
             <div class="taskbar">
                 <div class="task-meta">
-                    <span class="items-left"><span id="items-left">0</span> tasks remaining</span>
-                </div>
-                <div class="task-filters">
-                    <button type="button" class="filter-btn active" data-filter="all">All</button>
-                    <button type="button" class="filter-btn" data-filter="active">Active</button>
-                    <button type="button" class="filter-btn" data-filter="completed">Completed</button>
+                    <span class="items-left">
+                        <span id="items-left">0</span> 
+                        <span id="items-label">tasks remaining</span>
+                    </span>
                 </div>
                 <div class="task-actions">
-                    <button type="button" class="ghost-btn" id="clear-completed">
-                        <i class="fa-regular fa-broom"></i>
-                        Clear completed
+                    <button 
+                        type="button" 
+                        class="ghost-btn" 
+                        id="clear-completed"
+                        aria-label="Clear all completed tasks"
+                    >
+                        <i class="fa-regular fa-broom" aria-hidden="true"></i>
+                        <span class="btn-text">Clear</span>
                     </button>
                 </div>
             </div>
@@ -91,7 +173,7 @@
 </div>
 
 <!-- Confetti -->
-<canvas id="confetti-canvas"></canvas>
+<canvas id="confetti-canvas" aria-hidden="true"></canvas>
 
 <script src="script.js"></script>
 </body>
